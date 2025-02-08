@@ -1,2 +1,0 @@
-# articlepup
-science!
