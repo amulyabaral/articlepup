@@ -6,14 +6,91 @@
     <title>ArticlePup</title>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <style>
+        /* General Styles */
         body {
             font-family: 'Inter', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
+            background-color: transparent; /* Transparent background */
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center; /* Center everything */
         }
 
+        /* Header Styles */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333; /* Black color */
+        }
+
+        /* Info Pill Styles */
+        .info-pill {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 8px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            color: #333; /* Black color */
+            font-size: 0.9em;
+            background-color: transparent; /* Transparent background */
+            border: 1px solid #ccc; /* Light grey border */
+        }
+
+        /* Filter Section Styles */
+        .filter-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc; /* Light grey border */
+            background-color: transparent; /* Transparent background */
+            color: #333; /* Black color */
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+            margin: 0 auto; /* Center the select element */
+            display: block; /* Ensure it respects margin: auto */
+        }
+
+        select:focus {
+            border-color: #333; /* Black color */
+            outline: none;
+        }
+
+        /* Article Styles */
+        .article {
+            border: 1px solid #ccc; /* Light grey border */
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background-color: transparent; /* Transparent background */
+            transition: background-color 0.3s, border-color 0.3s;
+            text-align: left; /* Reset text alignment for article content */
+            max-width: 800px; /* Limit article width */
+            margin-left: auto; /* Center the article */
+            margin-right: auto; /* Center the article */
+        }
+
+        .article:hover {
+            background-color: rgba(0, 0, 0, 0.1); /* Slightly darker transparent */
+        }
+
+        .altmetric-score {
+            font-weight: bold;
+            color: #333; /* Black color */
+        }
+
+        /* Loading Spinner Styles */
         #loading {
             text-align: center;
             padding: 2rem;
@@ -21,9 +98,9 @@
         }
 
         .spinner {
-            border: 8px solid #f3f3f3;
+            border: 8px solid #e0e0e0;
             border-radius: 50%;
-            border-top: 8px solid #3498db;
+            border-top: 8px solid blue; /* Black color */
             width: 40px;
             height: 40px;
             animation: spin 2s linear infinite;
@@ -35,49 +112,119 @@
             100% { transform: rotate(360deg); }
         }
 
-        .filter-section {
-            margin: 20px 0;
-            text-align: center;
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
         }
 
-        .article {
-            border: 1px solid #eee;
-            padding: 20px;
-            margin: 10px 0;
-            border-radius: 5px;
+        body.dark-mode h1 {
+            color: #e0e0e0; /* White color */
         }
 
-        .article:hover {
-            background-color: #f9f9f9;
+        body.dark-mode .info-pill {
+            background-color: transparent; /* Transparent background */
+            color: #e0e0e0; /* White color */
+            border-color: #e0e0e0; /* White border */
         }
 
-        .altmetric-score {
-            font-weight: bold;
-            color: #2c5282;
+        body.dark-mode select {
+            background-color: transparent; /* Transparent background */
+            color: #e0e0e0; /* White color */
+            border-color: #e0e0e0; /* White border */
         }
 
-        /* Added dark mode support */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #121212;
-                color: #e0e0e0;
-            }
-            .article {
-                border-color: #444;
-                background-color: #1e1e1e;
-            }
-            .altmetric-score {
-                color: #f39c12;
-            }
+        body.dark-mode .article {
+            border-color: #e0e0e0; /* White border */
+            background-color: transparent; /* Transparent background */
+            color: #e0e0e0; /* White color */
+        }
+
+        body.dark-mode .article:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly lighter transparent */
+        }
+
+        body.dark-mode .altmetric-score {
+            color: #e0e0e0; /* White color */
+        }
+
+        body.dark-mode .spinner {
+            border-top-color: #e0e0e0; /* White color */
+            border-color: #333;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            justify-content: center; /* Center the toggle */
+            margin-bottom: 10px;
+            padding-right: 0; /* Remove right padding */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #333; /* Black color */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #333; /* Black color */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
     </style>
 </head>
 <body>
-    <div style="display: flex; align-items: center; justify-content: center;">
+    <!-- Toggle Switch -->
+    <div class="toggle-container">
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="header-container">
         <img src="logo.webp" alt="Logo" style="height: 50px; margin-right: 10px;">
         <h1>Articlepup</h1>
     </div>
-    <div class="info-pill" style="text-align: center; margin-bottom: 20px; padding: 8px 15px; background-color: #e2e8f0; border-radius: 20px; display: inline-block; color: #4a5568; font-size: 0.9em;">
+    <div class="info-pill">
         Sniffs out the hottest 🔥 biology preprints from yesterday so you can always keep up on the latest research!
     </div>
     
@@ -121,6 +268,37 @@
     <div id="articles-container"></div>
 
     <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Function to set the theme
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Event listener for the toggle
+        darkModeToggle.addEventListener('change', () => {
+            if (darkModeToggle.checked) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        });
+
+        // Check local storage for saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+            if (savedTheme === 'dark') {
+                darkModeToggle.checked = true;
+            }
+        }
+
         async function fetchArticles() {
             const loading = document.getElementById('loading');
             const container = document.getElementById('articles-container');
