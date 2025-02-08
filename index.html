@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArticlePup</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        #progress {
+            text-align: center;
+            padding: 1rem;
+            display: none;
+        }
+
+        .filter-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .article {
+            border: 1px solid #eee;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .article:hover {
+            background-color: #f9f9f9;
+        }
+
+        .altmetric-score {
+            font-weight: bold;
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">bioRxiv Daily Digest</h1>
+    
+    <div class="filter-section">
+        <select id="category-filter">
+    		<option value="all">🔍 All Categories</option>
+   		<option value="animal-behavior-and-cognition">🐘 Animal Behavior and Cognition</option>
+    		<option value="biochemistry">🧪 Biochemistry</option>
+    		<option value="bioengineering">⚙️ Bioengineering</option>
+    		<option value="bioinformatics">💻 Bioinformatics</option>
+    		<option value="biophysics">⚛️ Biophysics</option>
+    		<option value="cancer-biology">🔬 Cancer Biology</option>
+    		<option value="cell-biology">🔋 Cell Biology</option>
+    		<option value="clinical-trials">💊 Clinical Trials</option>
+    		<option value="developmental-biology">🐣 Developmental Biology</option>
+    		<option value="ecology">🌍 Ecology</option>
+    		<option value="epidemiology">📊 Epidemiology</option>
+    		<option value="evolutionary-biology">🧬 Evolutionary Biology</option>
+    		<option value="genetics">🧩 Genetics</option>
+    		<option value="genomics">🔠 Genomics</option>
+    		<option value="immunology">🛡️ Immunology</option>
+    		<option value="microbiology">🦠 Microbiology</option>
+    		<option value="molecular-biology">⚗️ Molecular Biology</option>
+    		<option value="neuroscience">🧠 Neuroscience</option>
+    		<option value="paleontology">🦕 Paleontology</option>
+    		<option value="pathology">🔭 Pathology</option>
+    		<option value="pharmacology-and-toxicology">💉 Pharmacology and Toxicology</option>
+    		<option value="physiology">❤️ Physiology</option>
+    		<option value="plant-biology">🌱 Plant Biology</option>
+    		<option value="scientific-communication-and-education">📚 Scientific Communication and Education</option>
+    		<option value="synthetic-biology">🧫 Synthetic Biology</option>
+    		<option value="systems-biology">🔄 Systems Biology</option>
+    		<option value="zoology">🦒 Zoology</option>
+		</select>
+    </div>
+
+    <div id="loading">
+        <p>Loading articles...</p>
+    </div>
+
+    <div id="progress">
+        <p>Progress: <span id="progress-text">0%</span></p>
+    </div>
+
+    <div id="articles-container"></div>
+
+    <script>
+        async function fetchArticles() {
+            const loading = document.getElementById('loading');
+            const progress = document.getElementById('progress');
+            const container = document.getElementById('articles-container');
+            const category = document.getElementById('category-filter').value;
+
+            loading.style.display = 'block';
+            progress.style.display = 'block';
+            container.innerHTML = '';
+
+            // Get yesterday's date in YYYY-MM-DD format
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const dateStr = yesterday.toISOString().split('T')[0];
+
+            try {
+                // Fetch articles from bioRxiv
+                const response = await fetch(
+                    `https://api.biorxiv.org/details/biorxiv/${dateStr}/${dateStr}/100`
+                );
+                const data = await response.json();
+                const articles = data.collection;
+
+                // Filter by category if needed
+                const filteredArticles = category === 'all' 
+                    ? articles 
+                    : articles.filter(article => article.category === category);
+
+                // Fetch Altmetric scores
+                document.getElementById('progress-text').textContent = 'Fetching Altmetric scores...';
+                
+                const articlesWithScores = await Promise.all(
+                    filteredArticles.map(async (article, index) => {
+                        const doi = article.doi;
+                        try {
+                            const altmetricResponse = await fetch(
+                                `https://api.altmetric.com/v1/doi/${doi}`
+                            );
+                            const altmetricData = await altmetricResponse.json();
+                            document.getElementById('progress-text').textContent = 
+                                `Processing ${index + 1}/${filteredArticles.length} articles...`;
+                            return {
+                                ...article,
+                                altmetricScore: altmetricData.score || 0
+                            };
+                        } catch {
+                            return {
+                                ...article,
+                                altmetricScore: 0
+                            };
+                        }
+                    })
+                );
+
+                // Sort by Altmetric score
+                articlesWithScores.sort((a, b) => b.altmetricScore - a.altmetricScore);
+
+                // Display articles
+                articlesWithScores.forEach(article => {
+                    const articleElement = document.createElement('div');
+                    articleElement.className = 'article';
+                    articleElement.innerHTML = `
+                        <h2>${article.title}</h2>
+                        <p><strong>Authors:</strong> ${article.authors}</p>
+                        <p><strong>DOI:</strong> <a href="https://doi.org/${article.doi}" target="_blank">${article.doi}</a></p>
+                        <p><strong>Category:</strong> ${article.category}</p>
+                        <p><strong>Abstract:</strong> ${article.abstract}</p>
+                        <p class="altmetric-score">Altmetric Score: ${article.altmetricScore}</p>
+                    `;
+                    container.appendChild(articleElement);
+                });
+            } catch (error) {
+                container.innerHTML = `<p>Error loading articles: ${error.message}</p>`;
+            } finally {
+                loading.style.display = 'none';
+                progress.style.display = 'none';
+            }
+        }
+
+        // Initial load
+        fetchArticles();
+
+        // Add event listener for category filter
+        document.getElementById('category-filter').addEventListener('change', fetchArticles);
+    </script>
+</body>
+</html>
