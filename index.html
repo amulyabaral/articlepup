@@ -252,7 +252,7 @@
                 articlesWithScores.sort((a, b) => b.altmetricScore - a.altmetricScore);
 
                 if (articlesWithScores.length === 0) {
-                    container.innerHTML = `<p>Looks like we've got no articles in this category. Guess they all took a hike! 🌲</p>`;
+                    container.innerHTML = `<p>Woof! 🐾 Looks like we've got no articles published in this category yesterday. Guess all the humans went for a walk! 🐕</p>`;
                 } else {
                     articlesWithScores.forEach(article => {
                         const articleElement = document.createElement('div');
