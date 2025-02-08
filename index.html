@@ -10,6 +10,9 @@
 
   gtag('config', 'G-ERR4HH3FLN');
 </script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6736452598930373"
+     crossorigin="anonymous"></script>
+     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArticlePup</title>
@@ -46,6 +49,7 @@
             border: 1px solid #ccc;
             display: block;
             margin: 20px auto;
+            font-family: inherit; /* Ensure select inherits font-family */
         }
 
         .article {
@@ -264,7 +268,7 @@
                 if (articlesWithScores.length === 0) {
                     container.innerHTML = `<p>Woof! 🐾 Looks like we've got no articles published in this category yesterday. Guess all the humans went for a walk! 🐕</p>`;
                 } else {
-                    articlesWithScores.forEach(article => {
+                    articlesWithScores.forEach((article, index) => {
                         const articleElement = document.createElement('div');
                         articleElement.className = 'article';
                         articleElement.innerHTML = `
@@ -276,6 +280,25 @@
                             <p class="altmetric-score">🔥 ${article.altmetricScore}</p>
                         `;
                         container.appendChild(articleElement);
+
+                        // Insert Google Ad after every 3 articles
+                        if ((index + 1) % 3 === 0) {
+                            const adElement = document.createElement('div');
+                            adElement.className = 'google-ad';
+                            adElement.innerHTML = `
+                                <!-- Replace this with your actual Google AdSense code -->
+                                <ins class="adsbygoogle"
+                                    style="display:block"
+                                    data-ad-client="ca-pub-xxxxxxxxxxxxxxxxx"
+                                    data-ad-slot="yyyyyyyyyyyyyyy"
+                                    data-ad-format="auto"
+                                    data-full-width-responsive="true"></ins>
+                                <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
+                            `;
+                            container.appendChild(adElement);
+                        }
                     });
                 }
             } catch (error) {
