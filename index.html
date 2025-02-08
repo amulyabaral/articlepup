@@ -20,10 +20,19 @@
             display: none;
         }
 
-        #progress {
-            text-align: center;
-            padding: 1rem;
-            display: none;
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .filter-section {
@@ -87,12 +96,8 @@
 		</select>
     </div>
 
-    <div id="loading">
-        <p>Loading articles...</p>
-    </div>
-
-    <div id="progress">
-        <p>Progress: <span id="progress-text">0%</span></p>
+    <div id="loading" style="text-align: center; padding: 2rem; display: none;">
+        <div class="spinner"></div>
     </div>
 
     <div id="articles-container"></div>
@@ -100,12 +105,10 @@
     <script>
         async function fetchArticles() {
             const loading = document.getElementById('loading');
-            const progress = document.getElementById('progress');
             const container = document.getElementById('articles-container');
             const category = document.getElementById('category-filter').value;
 
             loading.style.display = 'block';
-            progress.style.display = 'block';
             container.innerHTML = '';
 
             // Get yesterday's date in YYYY-MM-DD format
@@ -127,18 +130,14 @@
                     : articles.filter(article => article.category === category);
 
                 // Fetch Altmetric scores
-                document.getElementById('progress-text').textContent = 'Fetching Altmetric scores...';
-                
                 const articlesWithScores = await Promise.all(
-                    filteredArticles.map(async (article, index) => {
+                    filteredArticles.map(async (article) => {
                         const doi = article.doi;
                         try {
                             const altmetricResponse = await fetch(
                                 `https://api.altmetric.com/v1/doi/${doi}`
                             );
                             const altmetricData = await altmetricResponse.json();
-                            document.getElementById('progress-text').textContent = 
-                                `Processing ${index + 1}/${filteredArticles.length} articles...`;
                             return {
                                 ...article,
                                 altmetricScore: altmetricData.score || 0
@@ -173,7 +172,6 @@
                 container.innerHTML = `<p>Error loading articles: ${error.message}</p>`;
             } finally {
                 loading.style.display = 'none';
-                progress.style.display = 'none';
             }
         }
 
