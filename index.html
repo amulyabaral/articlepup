@@ -55,6 +55,21 @@
             font-weight: bold;
             color: #2c5282;
         }
+
+        /* Added dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            .article {
+                border-color: #444;
+                background-color: #1e1e1e;
+            }
+            .altmetric-score {
+                color: #f39c12;
+            }
+        }
     </style>
 </head>
 <body>
@@ -140,7 +155,7 @@
                             const altmetricData = await altmetricResponse.json();
                             return {
                                 ...article,
-                                altmetricScore: altmetricData.score || 0
+                                altmetricScore: Math.round(altmetricData.score || 0) // Rounded score
                             };
                         } catch {
                             return {
