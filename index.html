@@ -12,7 +12,10 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArticlePup</title>
+    <title>ArticlePup: Trending Biology Preprints | Stay Updated on the Latest Research</title>
+    <meta name="description" content="ArticlePup sniffs out the hottest biology preprints, so you can stay updated on the latest research. Discover new findings in biochemistry, genetics, neuroscience, and more.">
+    <meta name="keywords" content="biology preprints, biorxiv, research, biochemistry, genetics, neuroscience, scientific articles, recent studies, scientific research">
+    <link rel="canonical" href="https://articlepup.com/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <style>
         body {
@@ -292,6 +295,20 @@
         fetchArticles();
 
         document.getElementById('category-filter').addEventListener('change', fetchArticles);
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "ArticlePup",
+        "url": "https://articlepup.com/",
+        "description": "Trending biology preprints so you can always keep up on the latest research!",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://articlepup.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
     </script>
 </body>
 </html>
